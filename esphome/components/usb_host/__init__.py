@@ -1,4 +1,5 @@
 import esphome.codegen as cg
+from esphome.components.const import CONF_ENABLE_HUBS, CONF_PID, CONF_VID
 from esphome.components.esp32 import (
     VARIANT_ESP32P4,
     VARIANT_ESP32S2,
@@ -21,9 +22,6 @@ usb_host_ns = cg.esphome_ns.namespace("usb_host")
 USBHost = usb_host_ns.class_("USBHost", Component)
 USBClient = usb_host_ns.class_("USBClient", Component)
 DOMAIN = "usb_host"
-CONF_VID = "vid"
-CONF_PID = "pid"
-CONF_ENABLE_HUBS = "enable_hubs"
 CONF_MAX_TRANSFER_REQUESTS = "max_transfer_requests"
 CONF_MAX_PACKET_SIZE = "max_packet_size"
 
