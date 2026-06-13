@@ -75,6 +75,27 @@ ep_configs: dict[str, dict[str, Any]] = {
             },
         ],
     },
+    "on_off_output": {
+        DEVICE_TYPE: "ON_OFF_OUTPUT",
+        CONF_CLUSTERS: [
+            {
+                CONF_ID: "ON_OFF",
+                ROLE: CLUSTER_ROLE["SERVER"],
+                CONF_ATTRIBUTES: [
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0000,
+                        CONF_TYPE: "BOOL",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                    {
+                        CONF_ATTRIBUTE_ID: 0x1C,
+                        CONF_TYPE: "CHAR_STRING",
+                    },
+                ],
+            },
+        ],
+    },
 }
 
 

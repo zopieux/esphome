@@ -26,10 +26,14 @@ static const uint16_t ED_KEEP_ALIVE = 3000; /* 3000 millisecond */
 static const uint8_t MAX_CHILDREN = 10;
 
 #define ESP_ZB_DEFAULT_RADIO_CONFIG() \
-  { .radio_mode = ZB_RADIO_MODE_NATIVE, }
+  { \
+      .radio_mode = ZB_RADIO_MODE_NATIVE, \
+  }
 
 #define ESP_ZB_DEFAULT_HOST_CONFIG() \
-  { .host_connection_mode = ZB_HOST_CONNECTION_MODE_NONE, }
+  { \
+      .host_connection_mode = ZB_HOST_CONNECTION_MODE_NONE, \
+  }
 
 uint8_t *get_zcl_string(const char *str, uint8_t max_size, bool use_max_size = false);
 
@@ -64,6 +68,8 @@ class ZigbeeComponent : public Component {
   bool is_battery_powered() { return this->basic_cluster_data_.power_source == ESP_ZB_ZCL_BASIC_POWER_SOURCE_BATTERY; }
   bool is_started() { return this->started; }
   bool is_connected() { return this->connected_; }
+  void on_attribute_value_received(uint8_t endpoint_id, uint16_t cluster_id, uint8_t role, uint16_t attr_id,
+                                   uint8_t attr_type, const void *value_p);
   std::atomic<bool> started = false;
   std::atomic<bool> joined = false;
   std::atomic<bool> factory_new = false;

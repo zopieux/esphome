@@ -114,6 +114,11 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
                       "Received message: error status(%d)", message->info.status);
   ESP_LOGD(TAG, "Received message: endpoint(%d), cluster(0x%x), attribute(0x%x), data size(%d)",
            message->info.dst_endpoint, message->info.cluster, message->attribute.id, message->attribute.data.size);
+  if (global_zigbee != nullptr) {
+    global_zigbee->on_attribute_value_received(message->info.dst_endpoint, message->info.cluster,
+                                               ESP_ZB_ZCL_CLUSTER_SERVER_ROLE, message->attribute.id,
+                                               message->attribute.data.type, message->attribute.data.value);
+  }
   return ret;
 }
 
@@ -128,6 +133,15 @@ static esp_err_t zb_action_handler(esp_zb_core_action_callback_id_t callback_id,
       break;
   }
   return ret;
+}
+
+void ZigbeeComponent::on_attribute_value_received(uint8_t endpoint_id, uint16_t cluster_id, uint8_t role,
+                                                  uint16_t attr_id, uint8_t attr_type, const void *value_p) {
+  auto key = std::make_tuple(endpoint_id, cluster_id, role, attr_id);
+  auto it = this->attributes_.find(key);
+  if (it != this->attributes_.end()) {
+    it->second->on_value_received(attr_type, value_p);
+  }
 }
 
 void ZigbeeComponent::create_default_cluster(uint8_t endpoint_id, zb_ha_standard_devs_e device_id) {
