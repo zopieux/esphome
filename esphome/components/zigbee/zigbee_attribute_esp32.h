@@ -18,6 +18,9 @@
 #ifdef USE_BINARY_SENSOR
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #endif
+#ifdef USE_SWITCH
+#include "esphome/components/switch/switch.h"
+#endif
 
 namespace esphome::zigbee {
 
@@ -45,11 +48,16 @@ class ZigbeeAttribute : public Component {
   template<typename T> void set_attr(const T &value);
   uint8_t attr_type() { return attr_type_; }
   void set_report(bool force);
+  void on_value_received(uint8_t type, const void *value_p);
 #ifdef USE_SENSOR
   template<typename T> void connect(sensor::Sensor *sensor);
 #endif
 #ifdef USE_BINARY_SENSOR
   template<typename T> void connect(binary_sensor::BinarySensor *sensor);
+#endif
+#ifdef USE_SWITCH
+  template<typename T> void connect(switch_::Switch *s);
+  switch_::Switch *switch_{nullptr};
 #endif
   bool report_enabled = false;
 
@@ -92,6 +100,12 @@ template<typename T> void ZigbeeAttribute::connect(sensor::Sensor *sensor) {
 #ifdef USE_BINARY_SENSOR
 template<typename T> void ZigbeeAttribute::connect(binary_sensor::BinarySensor *sensor) {
   sensor->add_on_state_callback([this](bool value) { this->set_attr((T) (this->scale_ * value)); });
+}
+#endif
+#ifdef USE_SWITCH
+template<typename T> void ZigbeeAttribute::connect(switch_::Switch *s) {
+  this->switch_ = s;
+  s->add_on_state_callback([this](bool value) { this->set_attr((T) value); });
 }
 #endif
 

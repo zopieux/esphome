@@ -81,6 +81,17 @@ void ZigbeeAttribute::loop() {
   }
 }
 
+void ZigbeeAttribute::on_value_received(uint8_t type, const void *value_p) {
+#ifdef USE_SWITCH
+  if (this->switch_ != nullptr) {
+    if (type == ESP_ZB_ZCL_ATTR_TYPE_BOOL && value_p != nullptr) {
+      bool value = *(const bool *) value_p;
+      this->defer([this, value]() { this->switch_->control(value); });
+    }
+  }
+#endif
+}
+
 }  // namespace esphome::zigbee
 
 #endif

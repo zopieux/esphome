@@ -37,6 +37,7 @@ from .zigbee_esp32 import (
     final_validate_esp32,
     validate_binary_sensor_esp32,
     validate_sensor_esp32,
+    validate_switch_esp32,
     zigbee_require_vfs_select,
 )
 from .zigbee_zephyr import (
@@ -242,7 +243,7 @@ def validate_switch(config: ConfigType) -> ConfigType:
     if "zigbee" not in CORE.loaded_integrations or config.get(CONF_INTERNAL):
         return config
     if CORE.is_esp32:
-        return config
+        return validate_switch_esp32(config)
     return consume_endpoint(config)
 
 

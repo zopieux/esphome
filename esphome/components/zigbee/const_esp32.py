@@ -12,18 +12,21 @@ SCALE = "scale"
 CONF_ATTRIBUTE_ID = "attribute_id"
 KEY_BS_EP = "binary_sensor_ep"
 KEY_SENSOR_EP = "sensor_ep"
+KEY_SWITCH_EP = "switch_ep"
 
 ha_standard_devices = cg.esphome_ns.enum("zb_ha_standard_devs_e")
 DEVICE_ID = {
     "RANGE_EXTENDER": ha_standard_devices.ZB_HA_RANGE_EXTENDER_DEVICE_ID,
     "SIMPLE_SENSOR": ha_standard_devices.ZB_HA_SIMPLE_SENSOR_DEVICE_ID,
     "CUSTOM_ATTR": ha_standard_devices.ZB_HA_CUSTOM_ATTR_DEVICE_ID,
+    "ON_OFF_OUTPUT": ha_standard_devices.ZB_HA_ON_OFF_OUTPUT_DEVICE_ID,
 }
 cluster_id = cg.esphome_ns.enum("esp_zb_zcl_cluster_id_t")
 CLUSTER_ID = {
     "BASIC": cluster_id.ESP_ZB_ZCL_CLUSTER_ID_BASIC,
     "BINARY_INPUT": cluster_id.ESP_ZB_ZCL_CLUSTER_ID_BINARY_INPUT,
     "ANALOG_INPUT": cluster_id.ESP_ZB_ZCL_CLUSTER_ID_ANALOG_INPUT,
+    "ON_OFF": cluster_id.ESP_ZB_ZCL_CLUSTER_ID_ON_OFF,
 }
 cluster_role = cg.esphome_ns.enum("esp_zb_zcl_cluster_role_t")
 CLUSTER_ROLE = {

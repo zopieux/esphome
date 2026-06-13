@@ -55,6 +55,7 @@ from .const_esp32 import (
     DEVICE_TYPE,
     KEY_BS_EP,
     KEY_SENSOR_EP,
+    KEY_SWITCH_EP,
     ROLE,
     SCALE,
 )
@@ -129,9 +130,8 @@ def final_validate_esp32(config: ConfigType) -> ConfigType:
     if CONF_PARTITIONS in fv.full_config.get() and not isinstance(
         fv.full_config.get()[CONF_PARTITIONS], list
     ):
-        with open(
-            CORE.relative_config_path(fv.full_config.get()[CONF_PARTITIONS]),
-            encoding="utf8",
+        with CORE.relative_config_path(fv.full_config.get()[CONF_PARTITIONS]).open(
+            encoding="utf8"
         ) as f:
             partitions_tab = f.read()
             for partition, types in [
@@ -215,6 +215,15 @@ def validate_binary_sensor_esp32(config: ConfigType) -> ConfigType:
     zb_data = CORE.data.setdefault(KEY_ZIGBEE, {})
     binary_sensor_ep: list[dict] = zb_data.setdefault(KEY_BS_EP, [])
     binary_sensor_ep.append(ep)
+    return config
+
+
+def validate_switch_esp32(config: ConfigType) -> ConfigType:
+    ep = copy.deepcopy(ep_configs["on_off_output"])
+    setup_attributes(config, ep[CONF_CLUSTERS])
+    zb_data = CORE.data.setdefault(KEY_ZIGBEE, {})
+    switch_ep: list[dict] = zb_data.setdefault(KEY_SWITCH_EP, [])
+    switch_ep.append(ep)
     return config
 
 
@@ -309,7 +318,8 @@ async def esp32_to_code(config: ConfigType) -> "MockObj":
     zb_data = CORE.data.get(KEY_ZIGBEE, {})
     sensor_ep: list[dict] = zb_data.get(KEY_SENSOR_EP, [])
     binary_sensor_ep: list[dict] = zb_data.get(KEY_BS_EP, [])
-    ep_list = create_ep(sensor_ep + binary_sensor_ep, config.get(CONF_ROUTER))
+    switch_ep: list[dict] = zb_data.get(KEY_SWITCH_EP, [])
+    ep_list = create_ep(sensor_ep + binary_sensor_ep + switch_ep, config.get(CONF_ROUTER))
 
     # setup zigbee components
     var = cg.new_Pvariable(config[CONF_ID])
