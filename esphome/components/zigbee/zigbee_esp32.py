@@ -54,6 +54,7 @@ from .const_esp32 import (
     DEVICE_ID,
     DEVICE_TYPE,
     KEY_BS_EP,
+    KEY_LIGHT_EP,
     KEY_SENSOR_EP,
     KEY_SWITCH_EP,
     ROLE,
@@ -227,6 +228,15 @@ def validate_switch_esp32(config: ConfigType) -> ConfigType:
     return config
 
 
+def validate_light_esp32(config: ConfigType) -> ConfigType:
+    ep = copy.deepcopy(ep_configs["color_dimmable_light"])
+    setup_attributes(config, ep[CONF_CLUSTERS])
+    zb_data = CORE.data.setdefault(KEY_ZIGBEE, {})
+    light_ep: list[dict] = zb_data.setdefault(KEY_LIGHT_EP, [])
+    light_ep.append(ep)
+    return config
+
+
 def zigbee_require_vfs_select(config: ConfigType) -> ConfigType:
     """Register VFS select requirement during config validation."""
     # Zigbee uses esp_vfs_eventfd which requires VFS select support
@@ -319,7 +329,10 @@ async def esp32_to_code(config: ConfigType) -> "MockObj":
     sensor_ep: list[dict] = zb_data.get(KEY_SENSOR_EP, [])
     binary_sensor_ep: list[dict] = zb_data.get(KEY_BS_EP, [])
     switch_ep: list[dict] = zb_data.get(KEY_SWITCH_EP, [])
-    ep_list = create_ep(sensor_ep + binary_sensor_ep + switch_ep, config.get(CONF_ROUTER))
+    light_ep: list[dict] = zb_data.get(KEY_LIGHT_EP, [])
+    ep_list = create_ep(
+        sensor_ep + binary_sensor_ep + switch_ep + light_ep, config.get(CONF_ROUTER)
+    )
 
     # setup zigbee components
     var = cg.new_Pvariable(config[CONF_ID])

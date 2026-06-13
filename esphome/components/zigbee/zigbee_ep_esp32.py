@@ -96,6 +96,59 @@ ep_configs: dict[str, dict[str, Any]] = {
             },
         ],
     },
+    "color_dimmable_light": {
+        DEVICE_TYPE: "COLOR_DIMMABLE_LIGHT",
+        CONF_CLUSTERS: [
+            {
+                CONF_ID: "ON_OFF",
+                ROLE: CLUSTER_ROLE["SERVER"],
+                CONF_ATTRIBUTES: [
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0000,
+                        CONF_TYPE: "BOOL",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                ],
+            },
+            {
+                CONF_ID: "LEVEL_CONTROL",
+                ROLE: CLUSTER_ROLE["SERVER"],
+                CONF_ATTRIBUTES: [
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0000,
+                        CONF_TYPE: "U8",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                ],
+            },
+            {
+                CONF_ID: "COLOR_CONTROL",
+                ROLE: CLUSTER_ROLE["SERVER"],
+                CONF_ATTRIBUTES: [
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0003,
+                        CONF_TYPE: "U16",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0004,
+                        CONF_TYPE: "U16",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                    {
+                        CONF_ATTRIBUTE_ID: 0x0008,
+                        CONF_TYPE: "8BIT_ENUM",
+                        CONF_REPORT: REPORT["enable"],
+                        CONF_DEVICE: None,
+                    },
+                ],
+            },
+        ],
+    },
 }
 
 

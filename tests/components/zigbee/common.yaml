@@ -27,6 +27,18 @@ output:
     type: binary
     write_action:
       - zigbee.factory_reset
+  - platform: template
+    id: red_out
+    type: float
+    write_action: []
+  - platform: template
+    id: green_out
+    type: float
+    write_action: []
+  - platform: template
+    id: blue_out
+    type: float
+    write_action: []
 
 switch:
   - platform: template
@@ -40,3 +52,10 @@ number:
     min_value: 2
     max_value: 100
     step: 1
+
+light:
+  - platform: rgb
+    name: "Template Light"
+    red: red_out
+    green: green_out
+    blue: blue_out

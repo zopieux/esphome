@@ -36,6 +36,7 @@ from .const_zephyr import (
 from .zigbee_esp32 import (
     final_validate_esp32,
     validate_binary_sensor_esp32,
+    validate_light_esp32,
     validate_sensor_esp32,
     validate_switch_esp32,
     zigbee_require_vfs_select,
@@ -66,6 +67,7 @@ BINARY_SENSOR_SCHEMA = cv.Schema({}).extend(BASE_SCHEMA).extend(zephyr_binary_se
 SENSOR_SCHEMA = cv.Schema({}).extend(BASE_SCHEMA).extend(zephyr_sensor)
 SWITCH_SCHEMA = cv.Schema({}).extend(zephyr_switch)
 NUMBER_SCHEMA = cv.Schema({}).extend(zephyr_number)
+LIGHT_SCHEMA = cv.Schema({})
 
 
 def _validate_router_sleepy(config: ConfigType) -> ConfigType:
@@ -245,6 +247,14 @@ def validate_switch(config: ConfigType) -> ConfigType:
     if CORE.is_esp32:
         return validate_switch_esp32(config)
     return consume_endpoint(config)
+
+
+def validate_light(config: ConfigType) -> ConfigType:
+    if "zigbee" not in CORE.loaded_integrations or config.get(CONF_INTERNAL):
+        return config
+    if CORE.is_esp32:
+        return validate_light_esp32(config)
+    return config
 
 
 def validate_number(config: ConfigType) -> ConfigType:

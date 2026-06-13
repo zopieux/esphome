@@ -3,7 +3,7 @@ import enum
 
 import esphome.automation as auto
 import esphome.codegen as cg
-from esphome.components import mqtt, power_supply, web_server
+from esphome.components import mqtt, power_supply, web_server, zigbee
 import esphome.config_validation as cv
 from esphome.const import (
     CONF_BLUE,
@@ -209,6 +209,7 @@ RESTORE_MODES = {
 LIGHT_SCHEMA = (
     cv.ENTITY_BASE_SCHEMA.extend(web_server.WEBSERVER_SORTING_SCHEMA)
     .extend(cv.MQTT_COMMAND_COMPONENT_SCHEMA)
+    .extend(zigbee.LIGHT_SCHEMA)
     .extend(
         {
             cv.GenerateID(): cv.declare_id(LightState),
@@ -239,6 +240,7 @@ LIGHT_SCHEMA = (
 )
 
 LIGHT_SCHEMA.add_extra(entity_duplicate_validator("light"))
+LIGHT_SCHEMA.add_extra(zigbee.validate_light)
 
 BINARY_LIGHT_SCHEMA = LIGHT_SCHEMA.extend(
     {

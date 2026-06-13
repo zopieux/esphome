@@ -21,6 +21,9 @@
 #ifdef USE_SWITCH
 #include "esphome/components/switch/switch.h"
 #endif
+#ifdef USE_LIGHT
+#include "esphome/components/light/light_state.h"
+#endif
 
 namespace esphome::zigbee {
 
@@ -30,7 +33,12 @@ enum ZigbeeReportT {
   ZIGBEE_REPORT_FORCE,
 };
 
-class ZigbeeAttribute : public Component {
+class ZigbeeAttribute : public Component
+#ifdef USE_LIGHT
+    ,
+                        public light::LightRemoteValuesListener
+#endif
+{
  public:
   ZigbeeAttribute(ZigbeeComponent *parent, uint8_t endpoint_id, uint16_t cluster_id, uint8_t role, uint16_t attr_id,
                   uint8_t attr_type, float scale, uint8_t max_size)
@@ -58,6 +66,12 @@ class ZigbeeAttribute : public Component {
 #ifdef USE_SWITCH
   template<typename T> void connect(switch_::Switch *s);
   switch_::Switch *switch_{nullptr};
+#endif
+#ifdef USE_LIGHT
+  template<typename T> void connect(light::LightState *light);
+  light::LightState *light_{nullptr};
+  void publish_state_to_zigbee();
+  void on_light_remote_values_update() override { this->publish_state_to_zigbee(); }
 #endif
   bool report_enabled = false;
 
@@ -106,6 +120,12 @@ template<typename T> void ZigbeeAttribute::connect(binary_sensor::BinarySensor *
 template<typename T> void ZigbeeAttribute::connect(switch_::Switch *s) {
   this->switch_ = s;
   s->add_on_state_callback([this](bool value) { this->set_attr((T) value); });
+}
+#endif
+#ifdef USE_LIGHT
+template<typename T> void ZigbeeAttribute::connect(light::LightState *light) {
+  this->light_ = light;
+  light->add_remote_values_listener(this);
 }
 #endif
 
