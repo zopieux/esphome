@@ -59,3 +59,7 @@ light:
     red: red_out
     green: green_out
     blue: blue_out
+
+button:
+  - platform: template
+    name: "Template Button"

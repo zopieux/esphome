@@ -39,6 +39,7 @@ from .zigbee_esp32 import (
     validate_light_esp32,
     validate_sensor_esp32,
     validate_switch_esp32,
+    validate_button_esp32,
     zigbee_require_vfs_select,
 )
 from .zigbee_zephyr import (
@@ -68,6 +69,7 @@ SENSOR_SCHEMA = cv.Schema({}).extend(BASE_SCHEMA).extend(zephyr_sensor)
 SWITCH_SCHEMA = cv.Schema({}).extend(zephyr_switch)
 NUMBER_SCHEMA = cv.Schema({}).extend(zephyr_number)
 LIGHT_SCHEMA = cv.Schema({})
+BUTTON_SCHEMA = cv.Schema({})
 
 
 def _validate_router_sleepy(config: ConfigType) -> ConfigType:
@@ -265,6 +267,14 @@ def validate_number(config: ConfigType) -> ConfigType:
     return consume_endpoint(config)
 
 
+def validate_button(config: ConfigType) -> ConfigType:
+    if "zigbee" not in CORE.loaded_integrations or config.get(CONF_INTERNAL):
+        return config
+    if CORE.is_esp32:
+        return validate_button_esp32(config)
+    return config
+
+
 ZIGBEE_ACTION_SCHEMA = automation.maybe_simple_id(
     cv.Schema(
         {
@@ -293,3 +303,14 @@ async def reset_zigbee_to_code(
     var = cg.new_Pvariable(action_id, template_arg)
     await cg.register_parented(var, config[CONF_ID])
     return var
+
+
+# Dynamically register validate_button on button schema to ensure it works even if
+# only the zigbee component is overridden via external_components.
+try:
+    from esphome.components.button import _BUTTON_SCHEMA
+    if not any(s.schema == validate_button for s in _BUTTON_SCHEMA._extra_schemas):
+        _BUTTON_SCHEMA.add_extra(validate_button)
+except Exception:
+    pass
+

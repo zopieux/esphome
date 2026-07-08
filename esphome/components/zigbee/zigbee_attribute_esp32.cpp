@@ -166,6 +166,19 @@ void ZigbeeAttribute::publish_state_to_zigbee() {
 #endif
 
 void ZigbeeAttribute::on_value_received(uint8_t type, const void *value_p) {
+#ifdef USE_BUTTON
+  if (this->button_ != nullptr) {
+    if (type == ESP_ZB_ZCL_ATTR_TYPE_BOOL && value_p != nullptr) {
+      bool value = *(const bool *) value_p;
+      if (value) {
+        this->defer([this]() {
+          this->button_->press();
+          this->set_attr(false);
+        });
+      }
+    }
+  }
+#endif
 #ifdef USE_SWITCH
   if (this->switch_ != nullptr) {
     if (type == ESP_ZB_ZCL_ATTR_TYPE_BOOL && value_p != nullptr) {

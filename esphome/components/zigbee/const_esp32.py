@@ -14,6 +14,7 @@ KEY_BS_EP = "binary_sensor_ep"
 KEY_SENSOR_EP = "sensor_ep"
 KEY_SWITCH_EP = "switch_ep"
 KEY_LIGHT_EP = "light_ep"
+KEY_BUTTON_EP = "button_ep"
 
 ha_standard_devices = cg.esphome_ns.enum("zb_ha_standard_devs_e")
 DEVICE_ID = {

@@ -24,6 +24,9 @@
 #ifdef USE_LIGHT
 #include "esphome/components/light/light_state.h"
 #endif
+#ifdef USE_BUTTON
+#include "esphome/components/button/button.h"
+#endif
 
 namespace esphome::zigbee {
 
@@ -72,6 +75,10 @@ class ZigbeeAttribute : public Component
   light::LightState *light_{nullptr};
   void publish_state_to_zigbee();
   void on_light_remote_values_update() override { this->publish_state_to_zigbee(); }
+#endif
+#ifdef USE_BUTTON
+  template<typename T> void connect(button::Button *button);
+  button::Button *button_{nullptr};
 #endif
   bool report_enabled = false;
 
@@ -126,6 +133,15 @@ template<typename T> void ZigbeeAttribute::connect(switch_::Switch *s) {
 template<typename T> void ZigbeeAttribute::connect(light::LightState *light) {
   this->light_ = light;
   light->add_remote_values_listener(this);
+}
+#endif
+#ifdef USE_BUTTON
+template<typename T> void ZigbeeAttribute::connect(button::Button *button) {
+  this->button_ = button;
+  button->add_on_press_callback([this]() {
+    this->set_attr(true);
+    this->set_attr(false);
+  });
 }
 #endif
 
